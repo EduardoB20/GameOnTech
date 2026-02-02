@@ -71,7 +71,7 @@ app.post("/api/interview", async (req, res) => {
     try {
       const ai = getAI();
       response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents,
         generationConfig: { temperature: 0.6 }
       });
@@ -81,7 +81,7 @@ app.post("/api/interview", async (req, res) => {
         rotateKey();
         const aiRetry = getAI();
         response = await aiRetry.models.generateContent({
-          model: "gemini-2.0-flash",
+          model: "gemini-2.5-flash",
           contents,
           generationConfig: { temperature: 0.6 }
         });
@@ -99,5 +99,6 @@ app.post("/api/interview", async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
 
 
