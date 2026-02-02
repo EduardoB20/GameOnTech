@@ -14,7 +14,6 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey });
 
-// Mude isso sempre que alterar o prompt (pra confirmar no front/logs)
 const PROMPT_VERSION = "2026-02-02-v1";
 
 function systemPrompt() {
@@ -53,42 +52,53 @@ app.post("/api/interview", async (req, res) => {
     const text = String(message || "").trim();
     if (!text) return res.status(400).json({ error: "Mensagem vazia." });
 
-    // Para depuração: confirmar que esta versão está no ar
-    console.log(`[${new Date().toISOString()}] /api/interview PROMPT_VERSION=${PROMPT_VERSION}`);
+    // Evita duplicar a mensagem atual caso o front já tenha colocado no history
+    const hist = Array.isArray(history) ? history : [];
+    const trimmedHistory = (() => {
+      const last = hist[hist.length - 1];
+      if (last && last.role === "user" && String(last.text || "").trim() === text) {
+        return hist.slice(0, -1);
+      }
+      return hist;
+    })();
 
     const contents = [
-      // instruções fixas no começo
       { role: "user", parts: [{ text: systemPrompt() }] },
-
-      // histórico recente
-      ...(Array.isArray(history)
-        ? history.slice(-20).map((m) => ({
-            role: m.role === "user" ? "user" : "model",
-            parts: [{ text: String(m.text || "") }],
-          }))
-        : []),
-
-      // mensagem atual
+      ...trimmedHistory.slice(-12).map((m) => ({
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text: String(m.text || "") }],
+      })),
       { role: "user", parts: [{ text }] },
     ];
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents,
-      generationConfig: { temperature: 0.7 } // um pouco mais variado
+      generationConfig: { temperature: 0.6 },
     });
 
     const reply = (response?.text || "").trim();
-
-    // Envia também a versão pra você confirmar no front (sem aparecer pro usuário, a não ser que você mostre)
     res.json({ reply, promptVersion: PROMPT_VERSION });
   } catch (err) {
-    console.error(err);
+    const msg = String(err?.message || err);
+    console.error("ERRO Gemini:", msg);
+
+    // Se for quota/rate limit, devolve 429 pro front
+    if (msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED") || msg.includes("quota")) {
+      // tenta achar retryDelay no texto
+      const m = msg.match(/retry(?:Delay| in)\D*(\d+)\s*s/i);
+      const retryAfterSeconds = m ? Number(m[1]) : 35;
+
+      return res.status(429).json({
+        error: "Limite da Gemini atingido (quota).",
+        retryAfterSeconds,
+      });
+    }
+
     res.status(500).json({ error: "Falha no servidor." });
   }
 });
 
-// ✅ Render precisa de PORT dinâmico
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend rodando na porta ${PORT} | PROMPT_VERSION=${PROMPT_VERSION}`);
