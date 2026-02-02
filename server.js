@@ -85,11 +85,33 @@ app.post("/api/interview", async (req, res) => {
       { role: "user", parts: [{ text }] },
     ];
 
-    const response = await ai.models.generateContent({
+let response;
+
+try {
+  const ai = getAI();
+  response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents,
+    generationConfig: { temperature: 0.6 }
+  });
+} catch (err) {
+  const msg = String(err?.message || err);
+
+  // Se estourou quota/limite, troca a key e tenta MAIS 1 vez
+  if (msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED") || msg.includes("quota")) {
+    rotateKey();
+
+    const aiRetry = getAI();
+    response = await aiRetry.models.generateContent({
       model: "gemini-2.5-flash",
       contents,
-      generationConfig: { temperature: 0.6 },
+      generationConfig: { temperature: 0.6 }
     });
+  } else {
+    throw err;
+  }
+}
+
 
     const reply = (response?.text || "").trim();
     res.json({ reply, promptVersion: PROMPT_VERSION });
@@ -117,4 +139,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend rodando na porta ${PORT} | PROMPT_VERSION=${PROMPT_VERSION}`);
 });
+
 
