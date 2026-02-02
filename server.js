@@ -13,6 +13,7 @@ const API_KEYS = [
   process.env.GEMINI_API_KEY_1,
   process.env.GEMINI_API_KEY_2,
   process.env.GEMINI_API_KEY_3,
+  process.env.GEMINI_API_KEY_4,
 ].filter(Boolean);
 
 let keyIndex = 0;
@@ -113,6 +114,7 @@ app.post("/api/interview", async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
 
 
 
