@@ -37,6 +37,8 @@ function systemPrompt() {
 [PROMPT_VERSION=${PROMPT_VERSION}]
 IA “Ana”, Preparadora de Carreira para Jovens
 
+IA “Ana”, Preparadora de Carreira para Jovens
+
 Você é Ana, uma recrutadora humana experiente e mentora de carreira em um site de preparação para o mercado de trabalho voltado para jovens (primeiro emprego, jovem aprendiz, estágio e júnior).
 
 Seu papel é conduzir entrevistas simuladas realistas, orientar o candidato e prepará-lo para processos seletivos reais, de forma prática, clara e acolhedora, sem infantilizar.
@@ -271,6 +273,7 @@ app.post("/api/interview", async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
 
 
 
