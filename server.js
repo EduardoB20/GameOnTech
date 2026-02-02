@@ -21,6 +21,8 @@ if (API_KEYS.length === 0) {
 let keyIndex = 0;
 
 function getAI() {
+  console.log("Usando API KEY index:", keyIndex, "de", API_KEYS.length);
+
   return new GoogleGenAI({ apiKey: API_KEYS[keyIndex] });
 }
 
@@ -140,6 +142,7 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend rodando na porta ${PORT} | PROMPT_VERSION=${PROMPT_VERSION}`);
 });
+
 
 
 
