@@ -6,13 +6,27 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.error("ERRO: Defina GEMINI_API_KEY no ambiente.");
+const API_KEYS = [
+  process.env.AIzaSyBUaOTNU5mjvOLTGZ323UAZIcxDd7Cqjl0,
+  process.env.AIzaSyAO47SXi01dPJbM3uZmltedBAvw6I0ASAU,
+  process.env.AIzaSyA4aJBl2dD_k6e6RuTJwTJ_Df7XQFzRHCI,
+].filter(Boolean);
+
+if (API_KEYS.length === 0) {
+  console.error("ERRO: Defina GEMINI_API_KEY_1, GEMINI_API_KEY_2 (e opcional _3) no ambiente.");
   process.exit(1);
 }
 
-const ai = new GoogleGenAI({ apiKey });
+let keyIndex = 0;
+
+function getAI() {
+  return new GoogleGenAI({ apiKey: API_KEYS[keyIndex] });
+}
+
+function rotateKey() {
+  keyIndex = (keyIndex + 1) % API_KEYS.length;
+  console.warn("🔄 Troquei a API KEY. Agora usando índice:", keyIndex);
+}
 
 const PROMPT_VERSION = "2026-02-02-v1";
 
@@ -103,3 +117,4 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Backend rodando na porta ${PORT} | PROMPT_VERSION=${PROMPT_VERSION}`);
 });
+
