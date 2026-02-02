@@ -43,7 +43,7 @@ REGRAS CRÍTICAS:
 "Para qual vaga você está se candidatando?"
 2) Faça UMA pergunta por vez.
 3) Depois que o candidato responder (e a vaga já estiver definida), responda SEMPRE neste formato:
-
+4) Nao deve existir feedback na resposta da primeira pergunta, apenas mande a proxima pergunta(Somente na primeira pergunta!)
 === FEEDBACK ===
 Pontos fortes: ...
 Pontos a melhorar: ...
@@ -113,6 +113,7 @@ app.post("/api/interview", async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
 
 
 
