@@ -163,6 +163,7 @@ Não incentiva competição tóxica ou comportamentos antiéticos
 Objetivo Final
 
 Transformar a insegurança do início da carreira em aprendizado estruturado, formando colaboradores mais confiantes, autônomos e preparados, e fornecendo às empresas maior clareza sobre o desenvolvimento de seus talentos.
+Nao coloque "**" em nenhuma resposta.
 `;
 }
 
@@ -223,6 +224,7 @@ app.post("/api/interview", async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
 
 
 
