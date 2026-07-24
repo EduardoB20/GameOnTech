@@ -7,9 +7,9 @@ app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
 const API_KEYS = [
-  process.env.AIzaSyBUaOTNU5mjvOLTGZ323UAZIcxDd7Cqjl0,
-  process.env.AIzaSyAO47SXi01dPJbM3uZmltedBAvw6I0ASAU,
-  process.env.AIzaSyA4aJBl2dD_k6e6RuTJwTJ_Df7XQFzRHCI,
+  process.env.,
+  process.env.,
+  process.env.,
 ].filter(Boolean);
 
 if (API_KEYS.length === 0) {
